@@ -290,4 +290,20 @@ Cache-Augmented Generation (CAG) is emerging as a compelling alternative to Retr
 - **Quantitative Analysis**: We conducted extensive experiments showing scenarios where long-context LLMs outperform traditional RAG systems, especially with manageable knowledge bases.
 - **Practical Insights**: This work provided actionable insights into optimizing knowledge-intensive workflows, demonstrating the viability of retrieval-free methods for specific applications. Our CAG framework is released publicly.1
 
-(this is for next time )
+
+# Scenario: Will build a clinical decision support system for hospitals.
+Idea is that doctors need to query patient records and treatment guides and drug interactions and the responses need to be really comprehensive and of course, very accurate because they're going to be used by doctors during patient consultations.
+
+- Because in this case, the system could first use RAG to retrieve the most relevant subset from the massive knowledge base.
+So pulling in specific sections of a particular patient's history and some research papers that are based on the doctor's query.
+- And then instead of simply passing those retrieved chunks to the LLM, it could load all that retrieved content into a long context model that uses CAG, creating a temporary working memory, if you like, for the specific patient case.
+
+So it's really a hybrid approach.
+
+RAG's ability to efficiently search enormous knowledge bases, and then CAG's capability for providing the full breadth of medical knowledge when needed for those follow-up questions without the system repeatedly querying the database.
+1. Initial Query: Doctor asks a medical question.
+2. RAG Retrieval: Searches patient records, research papers, and drug data → retrieves relevant chunks.
+3. CAG Preload: The retrieved content is preloaded into the LLM’s KV cache (internal memory in the Transformer’s attention mechanism).
+4. LLM Response: The model uses both the query and the cached context to generate an answer.
+5. Follow-up Q&A: Follow-up questions are answered instantly using the cached context, without repeating retrieval.
+
