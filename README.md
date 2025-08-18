@@ -95,10 +95,13 @@ In Pinecone, there are two types of indexes for storing vector data: **Dense ind
 1. **Dense indexes** store dense vectors, which are a series of numbers that represent the meaning and relationships of text, images, or other types of data. Each number in a dense vector corresponds to a point in a multidimensional space. Vectors that are closer together in that space are semantically similar.
 
 _When you query a dense index, Pinecone retrieves the dense vectors that are the most semantically similar to the query. This is often called **semantic search**, nearest neighbor search, similarity search, or just vector search._
+_Example: "dog" and "puppy" would be placed close together because they mean almost the same thing.This is called semantic search (searching by meaning)._
 
 2. **Sparse indexes** store sparse vectors, which are a series of numbers that represent the words or phrases in a document. Sparse vectors have a very large number of dimensions, where only a small proportion of values are non-zero. The dimensions represent words from a dictionary, and the values represent the importance of these words in the document.
 
 _When you search a sparse index, Pinecone retrieves the sparse vectors that most exactly match the words or phrases in the query. Query terms are scored independently and then summed, with the most similar records scored highest. This is often called **lexical search** or **keyword search**._
+
+_Example: If you search for the word “dragon,” it will find document/text with “dragon” in them.This is called keyword search (searching by exact words)._
 
 ```py
 from pinecone.grpc import PineconeGRPC, GRPCClientConfig
