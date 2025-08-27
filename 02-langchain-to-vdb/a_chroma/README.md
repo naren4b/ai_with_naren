@@ -40,13 +40,31 @@ Choosing the right vector database is a critical decision for any AI-powered app
   - In Local and Single Node mode, all components share a process and use the local filesystem for durability.
   - In Distributed mode, components are deployed as independent services: - The log and built indexes are stored in cloud object storage. - The system catalog is backed by a SQL database. - All services use local SSDs as caches to reduce object storage latency and cost.
 
-# Operation flow: Write
+# 4. Operation flow: Write
 
 ---
 
-client > gateway > WAL logs >  
-client < gateway < WAL logs (ack)  
-Logs < compactor > storage > systemDb
+```mermaid
+sequenceDiagram
+    participant C as Client
+    participant G as Gateway
+    participant W as WAL Logs
+    participant X as Compactor
+    participant S as Storage
+    participant D as System DB
+
+    C->>G: Request
+    G->>G: Authenticate, Quota Check, Rate Limit, Transform to Ops Log
+    G->>W: Forward Ops Log (Persist)
+    W-->>G: Ack Persistence
+    G-->>C: Ack Write
+
+    X->>W: Pull Logs Periodically
+    X->>X: Build Optimized Indexes (vector, full-text, metadata)
+    X->>S: Write New Index Versions
+    X->>D: Register Index in System DB
+
+```
 
 1. Request arrives at the gateway, where it is authenticated, checked against quota limits, rate limited and then transformed into a log of operations.
 2. The log of operations is forwarded to the write-ahead-log for persistence.
@@ -54,12 +72,28 @@ Logs < compactor > storage > systemDb
 4. The compactor periodically pulls from the write-ahead-log and builds new index versions from the accumulated writes. These indexes are optimized for read performance and include vector, full-text, and metadata indexes.
 5. Once new index versions are built, they are written to storage and registered in the system database.
 
-# Operation flow: Read
+# 5. Operation flow: Read
 
 ---
 
-client > gateway > query executor > Storage  
-client < gateway < query executor < Storage (retrieved vector)
+```mermaid
+sequenceDiagram
+    participant C as Client
+    participant G as Gateway
+    participant Q as Query Executor
+    participant S as Storage
+
+    C->>G: Query Request
+    G->>G: Authenticate, Quota Check, Rate Limit, Transform to Logical Plan
+    G->>Q: Route Logical Plan (via Rendezvous Hash on Collection ID)
+    Q->>Q: Transform Logical → Physical Plan
+    Q->>S: Read from Storage Layer
+    Q->>Q: Pull from WAL Logs for Consistent Read
+    S-->>Q: Retrieved Vector + Data
+    Q-->>G: Query Results
+    G-->>C: Response (IDs + Docs + Metadata)
+
+```
 
 1. Request arrives at the gateway, where it is authenticated, checked against quota limits, rate limited and transformed into a logical plan.
 2. This logical plan is routed to the relevant query executor. In distributed Chroma, a rendezvous hash on the collection id is used to route the query to the correct nodes and provide cache coherence.
@@ -67,7 +101,7 @@ client < gateway < query executor < Storage (retrieved vector)
 4. The request is returned to the gateway and subsequently to the client.
 5. By default, `.query` and `.get` always return the documents and metadatas. You can use the include argument to modify what gets returned. IDs are always returned.
 
-# Example Code
+# 6. Example Code
 
 ---
 

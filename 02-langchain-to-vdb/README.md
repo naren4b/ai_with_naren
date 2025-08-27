@@ -48,9 +48,9 @@ This project demonstrates how to use [Ollama](https://ollama.com/) for generatin
 The file `res/my-data.csv` contains sample records:
 
 ```
-Id,Name, Profession, Age, Country, Gender,Hobby
-1,Alice, Engineer, 30, USA, Female, Painting and Cooking
-...
+Name,Age,Gender,Blood Type,Medical Condition,Date of Admission,Doctor,Hospital,Insurance Provider,Billing Amount,Room Number,Admission Type,Discharge Date,Medication,Test Results
+Bobby JacksOn,30,Male,B-,Cancer,2024-01-31,Matthew Smith,Sons and Miller,Blue Cross,18856.281305978155,328,Urgent,2024-02-02,Paracetamol,Normal
+LesLie TErRy,62,Male,A+,Obesity,2019-08-20,Samantha Davies,Kim Inc,Medicare,33643.327286577885,265,Emergency,2019-08-26,Ibuprofen,Inconclusive
 ```
 
 ## Flow Diagram
