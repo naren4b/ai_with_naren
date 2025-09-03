@@ -88,7 +88,7 @@ flowchart LR
 
 ```mermaid
 flowchart LR
-    Q[User Query] --> R[Real-time Index (Logs, Kafka, Elastic)]
+    Q[User Query] --> R["Real-time Index (Logs, Kafka ,Elastic)"]
     R --> Docs[Fresh Context Data]
     Docs --> LLM[LLM Generates Answer]
     Q --> LLM
@@ -114,7 +114,7 @@ flowchart LR
 ```mermaid
 flowchart LR
     Q[User Query] --> Router[LLM Router]
-    Router --> SQL[Structured DB (SQL)]
+    Router --> SQL["Structured DB (SQL)"]
     Router --> VDB[Vector DB]
     SQL --> R1[Structured Results]
     VDB --> R2[Unstructured Docs]
